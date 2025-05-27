@@ -15,9 +15,9 @@ mostrando el correo electrónico de cada usuario junto a sus mensajes.
 
 
 # Instalación y ejecución
-``` git clone https://github.com/tuusuario/tu-repo-chat-supabase.git
-``` cd tu-repo-chat-supabase
-``` npm install
+``` git clone https://github.com/tuusuario/tu-repo-chat-supabase.git```
+``` cd tu-repo-chat-supabase```
+``` npm install```
 
   
 # Capturas
