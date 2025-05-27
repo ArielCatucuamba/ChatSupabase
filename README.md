@@ -11,24 +11,11 @@ mostrando el correo electrónico de cada usuario junto a sus mensajes.
   * Standalone Components de Angular para mayor rendimiento y simplicidad.
 
 # Estructura del proyecto
-src/
-  app/
-    pages/
-      login/         # Página de login y registro
-      list/          # Página principal del chat
-    services/
-      supabase.service.ts  # Lógica de conexión y operaciones con Supabase
-    guards/
-      auth.guard.ts  # Protección de rutas
-    app-routing.module.ts
-    app.module.ts
-  environments/
-    environment.ts   # Configuración de Supabase
-  assets/
-  theme/
-  global.scss
+![image](https://github.com/user-attachments/assets/b753be19-2791-4c40-beaa-7fef97209e3e)
+
 
 # Instalación y ejecución
+## asasasasas
 
   
 # Capturas
