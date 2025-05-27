@@ -17,9 +17,9 @@ mostrando el correo electrónico de cada usuario junto a sus mensajes.
 # Instalación y ejecución
 ``` Clonar el repositorio
 git clone https://github.com/ArielCatucuamba/ChatSupabase.git```
-``` Dirigirse al repositorio colando
-cd ChatSupabase``` 
-``` Instalar las dependencias
+Dirigirse al repositorio colando
+cd ChatSupabase
+Instalar las dependencias
 npm install``` 
 
   
