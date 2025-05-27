@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Chat</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="signOut()">
+        <ion-icon slot="icon-only" name="log-out"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let msg of messages | async">
+      <ion-label>
+        <h3>{{ msg.user_email || msg.user_id }}</h3>
+        <p>{{ msg.content }}</p>
+        <small>{{ msg.inserted_at | date:'short' }}</small>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <form (ngSubmit)="sendMessage()">
+      <ion-item>
+        <ion-input [(ngModel)]="messageText" name="messageText" placeholder="Escribe tu mensaje ..." required></ion-input>
+      </ion-item>
+      <ion-button expand="block" type="submit" [disabled]="!messageText.trim()">Enviar</ion-button>
+    </form>
+  </ion-toolbar>
+</ion-footer>

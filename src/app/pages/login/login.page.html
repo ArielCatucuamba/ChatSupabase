@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Devdactic Supabase</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form (ngSubmit)="login()" [formGroup]="credentials">
+    <div class="input-group">
+      <ion-item>
+        <ion-input placeholder="john@doe.com" formControlName="email"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input type="password" placeholder="password" formControlName="password"></ion-input>
+      </ion-item>
+    </div>
+
+    <ion-button type="submit" expand="block" [disabled]="!credentials.valid">Iniciar Sesion</ion-button>
+    <ion-button type="button" expand="block" (click)="signUp()" color="secondary">Registrarse!
+    </ion-button>
+  </form>
+</ion-content>

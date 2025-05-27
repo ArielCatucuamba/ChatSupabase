@@ -1,0 +1,7 @@
+{
+  "name": "devdacticSupa",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
