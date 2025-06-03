@@ -1,0 +1,28 @@
+.chat-message {
+  align-items: flex-start;
+  ion-avatar {
+    margin-right: 10px;
+    img {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 1px solid #ccc;
+    }
+  }
+  ion-label {
+    h3 {
+      margin: 0 0 2px 0;
+      font-size: 1.1em;
+      font-weight: 600;
+    }
+    p {
+      margin: 0 0 2px 0;
+      font-size: 1em;
+    }
+    small {
+      color: #888;
+      font-size: 0.8em;
+    }
+  }
+}

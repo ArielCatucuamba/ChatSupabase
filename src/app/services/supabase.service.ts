@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { createClient, SupabaseClient, User } from "@supabase/supabase-js";
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { AlertController } from '@ionic/angular'; // <-- Agrega esto
 
 const MESSAGE_DB = 'todos'; // Usar la tabla 'todos'
 
@@ -12,6 +13,9 @@ export interface Message {
   content: string;
   user_id: string;
   user_email?: string;
+  user_name?: string;
+  user_avatar?: string;
+  imageUrl?: string; // <-- Agregado para compatibilidad con mensajes de imagen
 }
 
 @Injectable({
@@ -23,7 +27,10 @@ export class SupabaseService {
 
   private supabase: SupabaseClient;
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private alertController: AlertController // <-- Agrega esto
+  ) {
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
 
     this.loadUser();
@@ -39,9 +46,46 @@ export class SupabaseService {
     });
   }
 
+  async signUpWithProfile(email: string, password: string, full_name: string) {
+    return await this.supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name }
+      }
+    });
+  }
+
+  // Método para subir avatar
+  async uploadAvatar(userId: string, file: File) {
+    const filePath = `avatars/${userId}_${Date.now()}`;
+    const { data, error } = await this.supabase
+      .storage
+      .from('archivos')
+      .upload(filePath, file);
+    if (error) throw error;
+    const { data: publicUrlData } = this.supabase
+      .storage
+      .from('archivos')
+      .getPublicUrl(filePath);
+    return publicUrlData.publicUrl;
+  }
+
+  // Método para actualizar perfil
+  async updateProfile(data: any) {
+    return await this.supabase.auth.updateUser({ data });
+  }
+
   async loadUser() {
     const { data: { user } } = await this.supabase.auth.getUser();
     if (user) {
+      // Si el usuario no tiene avatar, asignar el avatar por defecto
+      if (!user.user_metadata?.['avatar_url']) {
+        user.user_metadata = {
+          ...user.user_metadata,
+          avatar_url: 'https://svgsilh.com/svg/1299805.svg'
+        };
+      }
       this._currentUser.next(user);
     } else {
       this._currentUser.next(false);
@@ -67,19 +111,29 @@ export class SupabaseService {
       inserted_at: item.inserted_at,
       content: item.task,
       user_id: item.user_id,
-      user_email: item.user_email
+      user_email: item.user_email,
+      user_name: item.user_name,
+      user_avatar: item.user_avatar
     })));
   }
 
   async sendMessage(content: string) {
     const { data: { user } } = await this.supabase.auth.getUser();
     if (!user) return;
-    const newMessage = {
+    const email = user.email ?? '';
+    let avatar = user.user_metadata?.['avatar_url'];
+    if (!avatar || avatar === '') {
+      avatar = 'https://svgsilh.com/svg/1299805.svg';
+    }
+    // Solo envía el mensaje a la base de datos, no lo agregues localmente aquí
+    await this.supabase.from(MESSAGE_DB).insert({
       user_id: user.id,
       task: content,
-      user_email: user.email // Guarda el email
-    };
-    await this.supabase.from(MESSAGE_DB).insert(newMessage);
+      user_email: email,
+      user_name: user.user_metadata?.['full_name'] || email,
+      user_avatar: avatar
+    });
+    // Opcional: puedes mostrar un toast/alert aquí si lo deseas, pero no recargues los mensajes
   }
 
   handleMessagesChanged() {
@@ -95,7 +149,9 @@ export class SupabaseService {
               inserted_at: payload.new.inserted_at,
               content: payload.new.task,
               user_id: payload.new.user_id,
-              user_email: payload.new.user_email // Usa el email guardado
+              user_email: payload.new.user_email,
+              user_name: payload.new.user_name,
+              user_avatar: payload.new.user_avatar
             };
             this._messages.next([...this._messages.value, newMsg]);
           }
@@ -113,6 +169,8 @@ export class SupabaseService {
   async signIn(credentials: { email: string; password: string }): Promise<any> {
     const { error, data } = await this.supabase.auth.signInWithPassword(credentials);
     if (error) throw error;
+    // Redirigir al chat después de iniciar sesión exitosa
+    this.router.navigateByUrl('/chat');
     return data;
   }
 

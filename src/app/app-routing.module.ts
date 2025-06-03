@@ -13,6 +13,11 @@ const routes: Routes = [
     canLoad: [AuthGuard]
   },
   {
+    path: 'chat',
+    redirectTo: 'list',
+    pathMatch: 'full'
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'

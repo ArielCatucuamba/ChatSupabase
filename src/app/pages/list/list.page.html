@@ -10,11 +10,25 @@
 </ion-header>
 
 <ion-content>
-  <ion-list>
-    <ion-item *ngFor="let msg of messages | async">
+  <ion-list #messagesList style="max-height: 65vh; overflow-y: auto;">
+    <ion-item *ngFor="let msg of messages" class="chat-message">
+      <ion-avatar slot="start">
+        <img [src]="msg.user_avatar || 'https://img.freepik.com/vector-premium/icono-rostro-masculino-avatar-set-diseno-plano-perfiles-redes-sociales_1281173-3806.jpg?semt=ais_hybrid&w=740'" alt="avatar" />
+      </ion-avatar>
       <ion-label>
-        <h3>{{ msg.user_email || msg.user_id }}</h3>
-        <p>{{ msg.content }}</p>
+        <h3>{{ msg.user_name }}</h3>
+        <!-- Mostrar imagen si el mensaje es una URL de imagen -->
+        <ng-container *ngIf="msg.content && (msg.content.endsWith('.jpg') || msg.content.endsWith('.jpeg') || msg.content.endsWith('.png') || msg.content.endsWith('.gif')); else normalMsg">
+          <img [src]="msg.content" alt="Imagen enviada" style="max-width: 200px; border-radius: 8px; margin-top: 8px;" />
+        </ng-container>
+        <ng-template #normalMsg>
+          <ng-container *ngIf="msg.content && msg.content.startsWith('https://maps.google.com/?q='); else textMsg">
+            <a [href]="msg.content" target="_blank">Ver ubicación en Google Maps</a>
+          </ng-container>
+          <ng-template #textMsg>
+            <p>{{ msg.content }}</p>
+          </ng-template>
+        </ng-template>
         <small>{{ msg.inserted_at | date:'short' }}</small>
       </ion-label>
     </ion-item>
@@ -23,11 +37,23 @@
 
 <ion-footer>
   <ion-toolbar>
-    <form (ngSubmit)="sendMessage()">
-      <ion-item>
+    <form (ngSubmit)="sendMessage()" style="display: flex; align-items: center;">
+      <ion-item style="flex: 1; margin-bottom: 0;">
         <ion-input [(ngModel)]="messageText" name="messageText" placeholder="Escribe tu mensaje ..." required></ion-input>
       </ion-item>
-      <ion-button expand="block" type="submit" [disabled]="!messageText.trim()">Enviar</ion-button>
+      <ion-button type="submit" [disabled]="!messageText.trim()" style="margin-left: 8px; min-width: 48px;">
+        <ion-icon name="send"></ion-icon>
+      </ion-button>
+      <ion-button type="button" (click)="sendLocation()" style="margin-left: 8px; min-width: 48px;" color="secondary">
+        <ion-icon name="location"></ion-icon>
+      </ion-button>
+      <ion-button type="button" (click)="captureAndSendPhoto()" style="margin-left: 8px; min-width: 48px;" color="tertiary">
+        <ion-icon name="camera"></ion-icon>
+      </ion-button>
+      <ion-button type="button" (click)="sendRandomPokemon()" style="margin-left: 8px; min-width: 48px;" color="warning">
+        <ion-icon name="logo-octocat"></ion-icon>
+        <span style="margin-left:4px;">Pokémon</span>
+      </ion-button>
     </form>
   </ion-toolbar>
 </ion-footer>
